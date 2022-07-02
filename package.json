@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "18.0.0",
     "react-native": "0.69.1",
+    "react-native-share": "^7.6.4",
     "react-native-view-shot": "^3.3.0"
   },
   "devDependencies": {
