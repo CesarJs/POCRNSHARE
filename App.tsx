@@ -1,13 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React, {type PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -17,13 +7,15 @@ import {
   Text,
   useColorScheme,
   View,
+  TouchableOpacity,
+  Platform,
 } from 'react-native';
-
+import {captureRef} from 'react-native-view-shot';
+import Share from 'react-native-share';
 import {
   Colors,
   DebugInstructions,
   Header,
-  LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
@@ -59,10 +51,30 @@ const Section: React.FC<
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
+  const shareContentRef = React.useRef<View>(null);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  async function onShare() {
+    try {
+      const uri = await captureRef(shareContentRef, {
+        format: 'jpg',
+        quality: 0.8,
+      });
+
+      const options = {
+        type: 'image/jpeg',
+        url: Platform.select({
+          android: `file://${uri}`,
+          ios: uri,
+        }),
+        failOnCancel: false,
+      };
+
+      // @ts-ignore
+      await Share.open(options);
+    } catch (error) {}
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -70,26 +82,30 @@ const App = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+        <View ref={shareContentRef}>
+          <Header />
+          <View
+            style={{
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            }}>
+            <Section title="Step One">
+              Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+              screen and then come back to see your edits.
+            </Section>
+            <Section title="See Your Changes">
+              <ReloadInstructions />
+            </Section>
+            <Section title="Debug">
+              <DebugInstructions />
+            </Section>
+            <Section title="Learn More">
+              Read the docs to discover what to do next:
+            </Section>
+          </View>
         </View>
+        <TouchableOpacity style={styles.share} onPress={onShare}>
+          <Text style={styles.highlight}>SHARE</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -111,6 +127,13 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  share: {
+    padding: 15,
+    backgroundColor: 'lightblue',
+    margin: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
