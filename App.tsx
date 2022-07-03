@@ -51,12 +51,16 @@ const Section: React.FC<
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-  const shareContentRef = React.useRef<View>(null);
+  const shareContentRef = React.useRef<ScrollView>(null);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   async function onShare() {
     try {
+      // const uri = await captureScreen({
+      //   format: 'jpg',
+      //   quality: 0.8,
+      // });
       const uri = await captureRef(shareContentRef, {
         format: 'jpg',
         quality: 0.8,
@@ -81,9 +85,10 @@ const App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View ref={shareContentRef}>
-          <Header />
+        style={backgroundStyle}
+        ref={shareContentRef}>
+        <Header />
+        <View>
           <View
             style={{
               backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -103,10 +108,10 @@ const App = () => {
             </Section>
           </View>
         </View>
-        <TouchableOpacity style={styles.share} onPress={onShare}>
-          <Text style={styles.highlight}>SHARE</Text>
-        </TouchableOpacity>
       </ScrollView>
+      <TouchableOpacity style={styles.share} onPress={onShare}>
+        <Text style={styles.highlight}>SHARE</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
